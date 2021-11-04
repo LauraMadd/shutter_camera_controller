@@ -498,8 +498,8 @@ class  DAQ_shutter_im_digital_analog(object):
         self.analog_task.close()
 #-------------------------------------------------------------------------------                                                    
     def timelapse_single(self, 
-                        frequency_im = 1.,t_on_2p=0.001, \
-                                                num_images=10 ):
+                        frequency_im = 0.0498,t_on_2p=0.005, 
+                                                num_images=2 ):
         """ Acquire a time lapse and the shutter opens (single illumination) when the time lapse starts 
             - frequency_im = image acquisition frequency 
             
@@ -508,7 +508,7 @@ class  DAQ_shutter_im_digital_analog(object):
         assert(self.analog_channels ==[ 'ao3']), \
                 "\n Select only channels  \'ao3\' for this modality"
 
-        num_samples =  10**5
+        num_samples =  10**7
         num_pulses=1
         self.t_on_2p= t_on_2p
         # time variable calculated with the period of the im scan = 2* period
@@ -546,8 +546,7 @@ class  DAQ_shutter_im_digital_analog(object):
         # samples in one sec analog channel 
         samples_per_second_analog = int(len(self.t)*frequency_im) 
         
-  
-
+        print('samples/s ', samples_per_second_analog)
         self.signal_2 = np.zeros((int(num_samples)), dtype=np.float16)
         signal_2 = 5 * (square(2 * np.pi * self.t  * frequency_im, duty = .1)+1)/2.
         
@@ -564,7 +563,7 @@ class  DAQ_shutter_im_digital_analog(object):
         # by design,eery triang wave goes up and down, so scans 2 images
         # that's why there is a 2 there
         # also the sample_mode is FINITE now
-        self.analog_task.timing.cfg_samp_clk_timing(rate = samples_per_second_analog ,\
+        self.analog_task.timing.cfg_samp_clk_timing(rate = samples_per_second_analog,\
                     sample_mode= nidaqmx.constants.AcquisitionType.FINITE,
                     samps_per_chan=int(num_samples*num_images))
 
@@ -586,9 +585,9 @@ class  DAQ_shutter_im_digital_analog(object):
         self.analog_task.start()
         
         # # Useful when you test this function 
-        self.analog_task.wait_until_done(float((1/frequency_im)*num_images+.05))
-        self.analog_task.stop()
-        self.digital_task.stop()
+        # self.analog_task.wait_until_done(float((1/frequency_im)*num_images+.05))
+        # self.analog_task.stop()
+        # self.digital_task.stop()
         print('\nScan done. \n')
         
         # plt.figure('plot')
@@ -599,7 +598,7 @@ class  DAQ_shutter_im_digital_analog(object):
 #-------------------------------------------------------------------------------         
                     
     def timelapse_train(self, 
-                        frequency_im =0.05,t_on_2p=0.005, \
+                        frequency_im = 0.0498,t_on_2p=0.005, \
                                                 num_images=10, num_pulses=10 ):
         """ Acquire a time lapse and  the shutter opens (train illumination) when the time lapse starts. 
             - frequency_im = image acquisition frequency 
@@ -610,7 +609,7 @@ class  DAQ_shutter_im_digital_analog(object):
         assert(self.analog_channels ==['ao3']), \
                 "\n Select only channels  \'ao3\' for this modality"
 
-        num_samples =  10**5
+        num_samples =  10**7
         self.t_on_2p = t_on_2p
         # # time variable calculated with the period of the im scan = 2* period
         # #imaging !!! NB this is common for digital and analog
@@ -619,7 +618,7 @@ class  DAQ_shutter_im_digital_analog(object):
         #Period of one pulse 
         self.t_one_pulse=1/frequency_im
         # self.t_one_pulse=1/frequency_im/num_pulses
-        exit
+      
         #duty calculated from time on 
         self.duty_2p = self.t_on_2p/ self.t_one_pulse
         # self.duty_2p = self.t_on_2p/ self.t_one_pulse/2
@@ -697,10 +696,13 @@ class  DAQ_shutter_im_digital_analog(object):
         self.digital_task.start()
         self.analog_task.start()
         
-        self.analog_task.wait_until_done(float((1/frequency_im)*num_images+.05))
-        self.analog_task.stop()
-        self.digital_task.stop()
+        # self.analog_task.wait_until_done(float((1/frequency_im)*num_images+.05))
+        # self.analog_task.stop()
+        # self.digital_task.stop()
         print('\nScan done. \n')
+        print('samples/s ', samples_per_second_analog, 'duty',self.duty_2p)
+        
+
  
                         
     def train(self, 
