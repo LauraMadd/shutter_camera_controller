@@ -210,7 +210,7 @@ class single_DAQ_shutter():
         self.digital_task.close()
 
 
-
+#-------------------------------------------------------------------------------   
 
 
 class DAQ_shutter_im_digital():
@@ -499,7 +499,7 @@ class  DAQ_shutter_im_digital_analog(object):
 #-------------------------------------------------------------------------------                                                    
     def timelapse_single(self, 
                         frequency_im = 0.0498,t_on_2p=0.005, 
-                                                num_images=2 ):
+                                                num_images=1, num_pulses=1):
         """ Acquire a time lapse and the shutter opens (single illumination) when the time lapse starts 
             - frequency_im = image acquisition frequency 
             
@@ -508,8 +508,8 @@ class  DAQ_shutter_im_digital_analog(object):
         assert(self.analog_channels ==[ 'ao3']), \
                 "\n Select only channels  \'ao3\' for this modality"
 
-        num_samples =  10**7
-        num_pulses=1
+        num_samples =  10**4
+        
         self.t_on_2p= t_on_2p
         # time variable calculated with the period of the im scan = 2* period
         #imaging !!! NB this is common for digital and analog
@@ -598,8 +598,7 @@ class  DAQ_shutter_im_digital_analog(object):
 #-------------------------------------------------------------------------------         
                     
     def timelapse_train(self, 
-                        frequency_im = 0.0498,t_on_2p=0.005, \
-                                                num_images=10, num_pulses=10 ):
+                        frequency_im = 0.0498,t_on_2p=0.005, num_images=10):
         """ Acquire a time lapse and  the shutter opens (train illumination) when the time lapse starts. 
             - frequency_im = image acquisition frequency 
             - t_on_2p = time on for one pulse
@@ -608,7 +607,7 @@ class  DAQ_shutter_im_digital_analog(object):
         """
         assert(self.analog_channels ==['ao3']), \
                 "\n Select only channels  \'ao3\' for this modality"
-
+        num_pulses=num_images
         num_samples =  10**7
         self.t_on_2p = t_on_2p
         # # time variable calculated with the period of the im scan = 2* period
